@@ -19,7 +19,7 @@ namespace PokemonReviewApp.Repository
             return _context.Owners.Where(o => o.Id == ownerId).FirstOrDefault();
             
         }
-
+      
         public ICollection<Owner> GetOwners()
         {
             return _context.Owners.ToList();
