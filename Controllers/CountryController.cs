@@ -22,7 +22,7 @@ namespace PokemonReviewApp.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Country>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CountryDto>))]
         public IActionResult GetCountries()
         {
             var countries = _mapper.Map<List<CountryDto>>(_countryRepository.GetCountries());
@@ -77,18 +77,54 @@ namespace PokemonReviewApp.Controllers
 
             if (country != null)
             {
-                ModelState.AddModelError("", "Categoria ja existe");
+                ModelState.AddModelError("", "Country ja existe");
                 return StatusCode(422, ModelState);
             }
             if (!ModelState.IsValid) { return BadRequest(); }
             var countryMap = _mapper.Map<Country>(countryCreate);
             if (!_countryRepository.CreateCountry(countryMap))
             {
-                ModelState.AddModelError("", "Algo deu errado ao salvar a categoria");
+                ModelState.AddModelError("", "Algo deu errado ao salvar a country");
                 return StatusCode(500, ModelState);
             }
             return Ok("Country criado com sucesso");
         }
+
+        [HttpPut("{CountryId}")]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCountry(int CountryId, [FromBody] CountryDto updatedCountry)
+        {
+            if (updatedCountry == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if (CountryId != updatedCountry.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_countryRepository.CountryExist(CountryId))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
+
+                return BadRequest();
+            }
+            var CountryMap = _mapper.Map<Country>(updatedCountry);
+            if (!_countryRepository.UpdateCountry(CountryMap))
+            {
+                ModelState.AddModelError("", "Algo deu errado");
+                return StatusCode(500);
+            }
+            return NoContent();
+        }
+
+
+
 
     }
 

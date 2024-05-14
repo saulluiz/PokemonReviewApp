@@ -74,8 +74,8 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         public IActionResult CreateCategory([FromBody] CategoryDto categoryCreate)
         {
-            if(categoryCreate==null) return BadRequest(ModelState);
-            var category=_categoryRepository.GetCategories().Where(c=>c.Name.Trim().ToUpper()==categoryCreate.Name.TrimEnd().ToUpper()).FirstOrDefault();
+            if (categoryCreate == null) return BadRequest(ModelState);
+            var category = _categoryRepository.GetCategories().Where(c => c.Name.Trim().ToUpper() == categoryCreate.Name.TrimEnd().ToUpper()).FirstOrDefault();
 
 
             if (category != null)
@@ -85,14 +85,45 @@ namespace PokemonReviewApp.Controllers
             }
             if (!ModelState.IsValid) { return BadRequest(); }
             var categoryMap = _mapper.Map<Category>(categoryCreate);
-            if (!_categoryRepository.CreateCategory(categoryMap)) 
+            if (!_categoryRepository.CreateCategory(categoryMap))
             {
                 ModelState.AddModelError("", "Algo deu errado ao salvar a categoria");
                 return StatusCode(500, ModelState);
             }
             return Ok("Categoria criada com sucesso");
         }
+        [HttpPut("{categoryId}")]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int categoryId, [FromBody] CategoryDto updatedCategory)
+        {
+            if (updatedCategory == null)
+            {
+                return BadRequest(ModelState);
+            }
+            if(categoryId !=updatedCategory.Id)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_categoryRepository.CategoryExist(categoryId))
+            {
+                return NotFound();
+            }
+            if (!ModelState.IsValid)
+            {
 
+                return BadRequest();
+            }
+            var categoryMap=_mapper.Map<Category>(updatedCategory);
+            if (!_categoryRepository.UpdateCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Algo deu errado");
+                return StatusCode(500);
+            }
+            return NoContent();
+        }
 
 
 
