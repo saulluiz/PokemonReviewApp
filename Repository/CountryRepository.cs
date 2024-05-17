@@ -26,6 +26,11 @@ namespace PokemonReviewApp.Repository
             _context.Add(country);
             return Save();
         }
+        public bool DeleteCountry(Country country)
+        {
+            _context.Remove(country);
+            return Save();
+        }
 
         public ICollection<Country> GetCountries()      
         {

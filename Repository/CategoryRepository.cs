@@ -18,6 +18,11 @@ namespace PokemonReviewApp.Repository
             //essa forma pode estar errada, eu fiz diferente do instrutor, mas preciso testar ela
            
         }
+        public bool DeleteCategory(Category category)
+        {
+            _context.Remove(category);
+            return Save();
+        }
 
         public bool CreateCategory(Category category)
         {

@@ -13,5 +13,6 @@ namespace PokemonReviewApp.Interfaces
         bool CreateCountry(Country country);
         bool Save();
         bool UpdateCountry(Country country);
+        bool DeleteCountry(Country country);
     }
 }
